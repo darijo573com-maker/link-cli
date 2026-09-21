@@ -20,6 +20,19 @@ import {
 import { createMppRequest } from './request';
 import { decodeOptions, payOptions } from './schema';
 
+export function resolveInteractivePayResult(
+  result: PayResult | null | undefined,
+): PayResult | undefined {
+  if (result === undefined) {
+    throw new Error('Component exited without producing a result');
+  }
+  if (result === null) {
+    process.exitCode = 1;
+    return undefined;
+  }
+  return result;
+}
+
 export function createMppCli(
   repository: ISpendRequestResource,
   paymentMethodsFactory: () => IPaymentMethodsResource,
@@ -48,7 +61,7 @@ export function createMppCli(
       const headers = opts.header?.length ? opts.header : undefined;
 
       if (!c.agent && !c.formatExplicit) {
-        let capturedResult: PayResult | null = null;
+        let capturedResult: PayResult | null | undefined;
         return renderInteractive(
           <MppPay
             url={url}
@@ -66,11 +79,7 @@ export function createMppCli(
               capturedResult = result;
             }}
           />,
-          () => {
-            if (!capturedResult)
-              throw new Error('Component exited without producing a result');
-            return capturedResult;
-          },
+          () => resolveInteractivePayResult(capturedResult),
         );
       }
 
