@@ -6,6 +6,7 @@ import { Cli } from 'incur';
 import { renderInteractive } from '../../utils/render-interactive';
 import { SavedArtifact } from '../identity/saved-artifact';
 import { issueIdentityCredential } from './issue';
+import { listIdentityCredentials } from './list';
 import { writeIdentityCredentialArtifact } from './storage';
 
 export function createIdentityCredentialsCli(
@@ -13,6 +14,16 @@ export function createIdentityCredentialsCli(
 ) {
   const cli = Cli.create('credentials', {
     description: 'User info that has been signed, proving it comes from Link.',
+  });
+
+  cli.command('list', {
+    description:
+      'List metadata for the locally saved current credential, including expiry and key path.',
+    mcp: false,
+    outputPolicy: 'all' as const,
+    async run() {
+      return listIdentityCredentials();
+    },
   });
 
   cli.command('request', {
