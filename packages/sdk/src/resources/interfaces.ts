@@ -1,5 +1,6 @@
 import type {
   ApprovalDetail,
+  ApprovalPolicy,
   BalancesPage,
   CredentialType,
   LineItem,
@@ -114,6 +115,10 @@ export interface IShippingAddressResource {
 
 export interface IUserInfoResource {
   retrieve(): Promise<UserInfo>;
+}
+
+export interface IApprovalPolicyResource {
+  retrieve(): Promise<ApprovalPolicy>;
 }
 
 export interface IWebBotAuthResource {

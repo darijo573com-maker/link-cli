@@ -233,6 +233,30 @@ export interface UserInfo {
   agent_wallet_verification_requirement?: AgentWalletVerificationRequirement;
 }
 
+/** Known actions, while remaining forward-compatible with new API values. */
+export type ApprovalPolicyAction =
+  | 'spend_request_create'
+  | (string & Record<never, never>);
+
+export interface ApprovalPolicyAmount {
+  amount: number;
+  currency: string;
+}
+
+export interface ApprovalPolicyLimits {
+  per_purchase: ApprovalPolicyAmount;
+}
+
+export interface ApprovalPolicyRule {
+  action: ApprovalPolicyAction;
+  limits: ApprovalPolicyLimits;
+  allowed_payment_methods?: string[];
+}
+
+export interface ApprovalPolicy {
+  rules: ApprovalPolicyRule[];
+}
+
 export interface ProductCapability {
   eligible: boolean;
   ineligibility_reasons: string[];

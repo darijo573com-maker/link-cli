@@ -1,5 +1,6 @@
 import { Cli } from 'incur';
 import { type CliAuthStorage, Storage, storage } from './auth/storage';
+import { createApprovalPolicyCli } from './commands/approval-policy';
 import { createAuthCli } from './commands/auth';
 import { createBalancesCli } from './commands/balances';
 import { createDemoCli } from './commands/demo';
@@ -130,6 +131,13 @@ cli.command(
 cli.command(
   createUserInfoCli(
     () => factory.createUserInfoResource(),
+    authStorage,
+    envAccessToken,
+  ),
+);
+cli.command(
+  createApprovalPolicyCli(
+    () => factory.createApprovalPolicyResource(),
     authStorage,
     envAccessToken,
   ),

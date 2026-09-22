@@ -1924,6 +1924,63 @@ describe('production mode', () => {
     });
   });
 
+  describe('approval-policy retrieve', () => {
+    it('GETs and returns the approval policy', async () => {
+      const policy = {
+        rules: [
+          {
+            action: 'spend_request_create',
+            limits: {
+              per_purchase: { amount: 5000, currency: 'usd' },
+            },
+            allowed_payment_methods: ['csmrpd_2', 'csmrpd_1'],
+          },
+        ],
+      };
+      setResponseForUrl('/approval-policy', 200, policy);
+
+      const result = await runProdCli('approval-policy', 'retrieve', '--json');
+
+      expect(result.exitCode).toBe(0);
+      expect(lastRequest.method).toBe('GET');
+      expect(lastRequest.url).toBe('/approval-policy');
+      expect(lastRequest.headers.authorization).toBe(
+        'Bearer prod_test_access_token',
+      );
+      expect(parseJson(result.stdout)).toEqual(policy);
+    });
+
+    it('surfaces the configured-policy not-found error', async () => {
+      setResponseForUrl('/approval-policy', 404, {
+        error: {
+          message: 'No approval policy has been configured',
+          code: 'approval_policy_not_found',
+        },
+      });
+
+      const result = await runProdCli('approval-policy', 'retrieve', '--json');
+
+      expect(result.exitCode).toBe(1);
+      expect(parseJson(result.stdout)).toMatchObject({
+        message:
+          'Failed to retrieve approval policy (404): No approval policy has been configured',
+      });
+    });
+
+    it('rejects unauthenticated requests before hitting the API', async () => {
+      storage.clearTokens();
+
+      const result = await runProdCli('approval-policy', 'retrieve', '--json');
+
+      expect(result.exitCode).toBe(1);
+      const output = parseJson(result.stdout) as Record<string, unknown>;
+      expect(output.code).toBe('NOT_AUTHENTICATED');
+      expect(
+        requests.find((request) => request.url === '/approval-policy'),
+      ).toBeUndefined();
+    });
+  });
+
   const SAMPLE_BALANCE = {
     source_id: 'csmrpd_001',
     type: 'cash',

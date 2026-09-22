@@ -1,5 +1,6 @@
 import {
   type AccessTokenProvider,
+  type IApprovalPolicyResource,
   type IAttestationsResource,
   type IBalancesResource,
   type IIdentityCredentialsResource,
@@ -118,6 +119,7 @@ export class ResourceFactory {
   private paymentMethodsResource?: IPaymentMethodsResource;
   private shippingAddressResource?: IShippingAddressResource;
   private userInfoResource?: IUserInfoResource;
+  private approvalPolicyResource?: IApprovalPolicyResource;
   private transactionsResource?: ITransactionsResource;
   private sourcesResource?: ISourcesResource;
   private summariesResource?: ISummariesResource;
@@ -287,6 +289,16 @@ export class ResourceFactory {
 
     const resource = sanitizeResource(this.createSdkClient().userInfo);
     this.userInfoResource = resource;
+    return resource;
+  }
+
+  createApprovalPolicyResource(): IApprovalPolicyResource {
+    if (this.approvalPolicyResource) {
+      return this.approvalPolicyResource;
+    }
+
+    const resource = sanitizeResource(this.createSdkClient().approvalPolicy);
+    this.approvalPolicyResource = resource;
     return resource;
   }
 

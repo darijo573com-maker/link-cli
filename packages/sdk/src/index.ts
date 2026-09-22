@@ -7,6 +7,7 @@ export {
   LinkSdkError,
   LinkTransportError,
 } from './errors';
+export { ApprovalPolicyResource } from './resources/approval-policy';
 export * from './resources/attestations';
 export {
   holderJwksEqual,
